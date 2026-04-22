@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>报价单生成器 - 物流三段法工具</title>
+    <!-- pako 压缩库 -->
+    <script src="https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js"></script>
     <style>
         * { box-sizing: border-box; }
         body {
@@ -375,7 +377,7 @@
     </div>
 </div>
 <div class="footer-version">
-    报价单生成器 v2.0-beta3 | 数据保存在本机，刷新不丢失 | 三段地理描述可自定义
+    报价单生成器 v2.0-beta4 | 数据保存在本机，刷新不丢失 | 采集-报价闭环
     <br>
     <a id="termsLink" style="cursor: pointer;">📜 使用条款</a>
 </div>
@@ -383,7 +385,6 @@
 <script>
     var feesData = { segment1: [], segment2: [], segment3: [] };
 
-    // 动态生成责任划分文本
     function getResponsibility(incoterm, place, seg1Place, seg2Route, seg3Place) {
         var seg1 = seg1Place || "[起运地]";
         var seg2Parts = seg2Route.split('→');
@@ -594,7 +595,6 @@
         }
     }
     
-    // 帮助面板折叠
     document.getElementById('helpPanel').addEventListener('click', function() {
         var content = document.getElementById('helpContent');
         var headerSpan = this.querySelector('.help-header span:last-child');
@@ -607,21 +607,18 @@
         }
     });
     
-    // 反馈弹窗
     var feedbackBtn = document.getElementById('feedbackBtn');
     var feedbackModal = document.getElementById('feedbackModal');
     var closeFeedback = document.getElementById('closeFeedbackModal');
     feedbackBtn.onclick = function() { feedbackModal.style.display = 'block'; };
     closeFeedback.onclick = function() { feedbackModal.style.display = 'none'; };
     
-    // 使用条款弹窗
     var termsLink = document.getElementById('termsLink');
     var termsModal = document.getElementById('termsModal');
     var closeTerms = document.getElementById('closeTermsModal');
     termsLink.onclick = function() { termsModal.style.display = 'block'; };
     closeTerms.onclick = function() { termsModal.style.display = 'none'; };
     
-    // 导入弹窗
     var importModal = document.getElementById('importModal');
     var closeImport = document.getElementById('closeImportModal');
     window.openImportModal = function() { 
@@ -638,7 +635,6 @@
         if(e.target == importModal) importModal.style.display = 'none';
     };
 
-    // 导入仓库报价核心逻辑
     window.importFromWarehouse = function() {
         var urlInput = document.getElementById('importUrlInput').value.trim();
         var msgEl = document.getElementById('importMsg');
@@ -653,17 +649,29 @@
                 msgEl.innerHTML = '<span style="color:#e53e3e;">❌ 链接无效：缺少 data 参数</span>';
                 return;
             }
-            var jsonStr = decodeURIComponent(atob(dataParam));
+            
+            // 解码 Base64
+            var binary = atob(dataParam);
+            var bytes = new Uint8Array(binary.length);
+            for (var i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+            
+            var jsonStr;
+            try {
+                // 尝试 gunzip 解压（新版压缩格式）
+                jsonStr = pako.ungzip(bytes, { to: 'string' });
+            } catch (e) {
+                // 如果解压失败，可能是旧版未压缩格式
+                jsonStr = decodeURIComponent(binary);
+            }
+            
             var payload = JSON.parse(jsonStr);
             if (!payload.fees) {
                 msgEl.innerHTML = '<span style="color:#e53e3e;">❌ 数据格式错误</span>';
                 return;
             }
             
-            // 清空现有段1费用
             feesData.segment1 = [];
             
-            // 费用码映射表（仓库代码 -> 显示名称）
             var codeMap = {
                 'WH_P0_STUFFING_20': '内装费(20GP)',
                 'WH_P0_STUFFING_40': '内装费(40GP)',
@@ -688,40 +696,25 @@
                 'WH_P2_PHOTO': '拍照/视频服务'
             };
             
-            // 处理P0
             (payload.fees.p0 || []).forEach(function(f) {
                 var name = codeMap[f.code] || f.name;
                 feesData.segment1.push({
-                    name: name,
-                    type: 'P0',
-                    price: f.amount || 0,
-                    currency: 'CNY',
-                    unit: f.unit || '箱',
-                    source: '供应商报价'
+                    name: name, type: 'P0', price: f.amount || 0, currency: 'CNY',
+                    unit: f.unit || '箱', source: '供应商报价'
                 });
             });
-            // 处理P1
             (payload.fees.p1 || []).forEach(function(f) {
                 var name = codeMap[f.code] || f.name;
                 feesData.segment1.push({
-                    name: name,
-                    type: 'P1',
-                    price: f.amount || 0,
-                    currency: 'CNY',
-                    unit: f.unit || '箱',
-                    source: '供应商报价'
+                    name: name, type: 'P1', price: f.amount || 0, currency: 'CNY',
+                    unit: f.unit || '箱', source: '供应商报价'
                 });
             });
-            // 处理P2
             (payload.fees.p2 || []).forEach(function(f) {
                 var name = codeMap[f.code] || f.name;
                 feesData.segment1.push({
-                    name: name,
-                    type: 'P2',
-                    price: f.amount || 0,
-                    currency: 'CNY',
-                    unit: f.unit || '箱',
-                    source: '供应商报价'
+                    name: name, type: 'P2', price: f.amount || 0, currency: 'CNY',
+                    unit: f.unit || '箱', source: '供应商报价'
                 });
             });
             
