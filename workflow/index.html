@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>业务流转单 · 极简原型</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f1f5f9;
+            margin: 0;
+            padding: 20px;
+        }
+        .app-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .form-panel {
+            flex: 1;
+            min-width: 380px;
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .preview-panel {
+            flex: 1.2;
+            min-width: 500px;
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        h2 {
+            margin: 0 0 16px 0;
+            font-size: 1.5rem;
+            color: #0f172a;
+            border-left: 4px solid #2563eb;
+            padding-left: 12px;
+        }
+        h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #334155;
+            margin: 16px 0 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 4px;
+        }
+        .form-group {
+            margin-bottom: 14px;
+        }
+        label {
+            display: block;
+            font-weight: 500;
+            font-size: 0.85rem;
+            margin-bottom: 4px;
+            color: #475569;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            background: white;
+        }
+        .row-2 {
+            display: flex;
+            gap: 10px;
+        }
+        .row-2 > * { flex: 1; }
+        .task-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            background: #f8fafc;
+            padding: 8px 10px;
+            border-radius: 8px;
+        }
+        .task-item input[type="checkbox"] { width: 20px; height: 20px; margin: 0; }
+        .task-item input[type="text"] { width: auto; flex: 1; }
+        .task-item select { width: 100px; }
+        .task-item .task-date { width: 130px; }
+        .fee-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .fee-row input { flex: 1; }
+        .fee-row select { width: 80px; }
+        .btn {
+            background: white;
+            border: 1px solid #cbd5e1;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.85rem;
+            margin-right: 8px;
+        }
+        .btn-primary {
+            background: #2563eb;
+            border-color: #2563eb;
+            color: white;
+        }
+        .btn-primary:hover { background: #1d4ed8; }
+        .action-bar {
+            margin-top: 24px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .version-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: #eef2ff;
+            padding: 10px 16px;
+            border-radius: 30px;
+        }
+        .version-bar label { margin: 0; font-weight: 600; }
+        .version-bar input { width: 150px; }
+        .version-bar span { margin: 0 5px; }
+        .preview-container {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            font-size: 0.9rem;
+        }
+        .preview-header {
+            text-align: center;
+            border-bottom: 2px solid #1e293b;
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+        }
+        .preview-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+        .preview-sub {
+            color: #64748b;
+            margin-top: 4px;
+        }
+        .preview-section {
+            margin-bottom: 20px;
+        }
+        .preview-section h4 {
+            background: #f1f5f9;
+            padding: 6px 10px;
+            margin: 0 0 10px 0;
+            font-size: 0.9rem;
+        }
+        .task-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .task-table th, .task-table td {
+            border: 1px solid #e2e8f0;
+            padding: 8px;
+            text-align: left;
+            font-size: 0.85rem;
+        }
+        .task-table th { background: #f8fafc; }
+        .fee-summary {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+        }
+        .total-box {
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-align: right;
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 2px solid #e2e8f0;
+        }
+        .footnote {
+            color: #94a3b8;
+            font-size: 0.75rem;
+            margin-top: 16px;
+            text-align: center;
+        }
+        @media print {
+            .form-panel, .action-bar, .version-bar, h2 { display: none; }
+            .preview-panel { box-shadow: none; padding: 0; }
+        }
+    </style>
+</head>
+<body>
+<div class="app-container">
+    <!-- 左侧表单区 -->
+    <div class="form-panel">
+        <h2>📋 流转单配置</h2>
+        
+        <!-- 版本管理栏 -->
+        <div class="version-bar">
+            <label>项目名称:</label>
+            <input type="text" id="projectName" value="XX项目" style="width:120px;">
+            <span>|</span>
+            <label>版本:</label>
+            <input type="text" id="versionDisplay" value="V1" readonly style="width:60px; background:#f1f5f9;">
+            <button class="btn" onclick="saveAsNewVersion()" style="margin-left:auto;">💾 保存为新版本</button>
+            <button class="btn" onclick="loadHistory()">📂 历史版本</button>
+        </div>
+
+        <div class="row-2">
+            <div class="form-group">
+                <label>贸易条款</label>
+                <select id="tradeTerm">
+                    <option value="EXW">EXW</option>
+                    <option value="FCA">FCA</option>
+                    <option value="FOB">FOB</option>
+                    <option value="CFR">CFR</option>
+                    <option value="CIF">CIF</option>
+                    <option value="DAP">DAP</option>
+                    <option value="DDP" selected>DDP</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>箱型箱量</label>
+                <input type="text" id="containerInfo" value="1x40HQ">
+            </div>
+        </div>
+
+        <div class="row-2">
+            <div class="form-group">
+                <label>段1 起运地</label>
+                <input type="text" id="geo1" value="上海洋山港">
+            </div>
+            <div class="form-group">
+                <label>段2 干线</label>
+                <input type="text" id="geo2" value="上海港 → 汉堡港">
+            </div>
+            <div class="form-group">
+                <label>段3 目的地</label>
+                <input type="text" id="geo3" value="柏林仓库">
+            </div>
+        </div>
+
+        <!-- 段1 起运地 -->
+        <h3>🚚 段1 · 起运地服务</h3>
+        <div class="form-group">
+            <label>供应商</label>
+            <input type="text" id="seg1Supplier" value="XX物流 (张经理 138xxxx)">
+        </div>
+        <div id="seg1Tasks" class="task-list"></div>
+        <button class="btn" onclick="addTask('seg1')" style="margin-top:5px;">+ 添加任务</button>
+        <div class="fee-row" style="margin-top:12px;">
+            <input type="text" id="seg1P0" placeholder="P0 主体费" value="2300">
+            <input type="text" id="seg1P1" placeholder="P1 附加费" value="1200">
+            <input type="text" id="seg1P2" placeholder="P2 增值费" value="0">
+            <select id="seg1Currency"><option>CNY</option><option>USD</option></select>
+        </div>
+
+        <!-- 段2 干线 -->
+        <h3 style="margin-top:24px;">✈️ 段2 · 干线段</h3>
+        <div class="form-group">
+            <label>承运人 / 订舱渠道</label>
+            <input type="text" id="seg2Carrier" value="MSC (中外运订舱)">
+        </div>
+        <div id="seg2Tasks" class="task-list"></div>
+        <button class="btn" onclick="addTask('seg2')" style="margin-top:5px;">+ 添加任务</button>
+        <div class="fee-row" style="margin-top:12px;">
+            <input type="text" id="seg2P0" placeholder="P0 海运费" value="6800">
+            <input type="text" id="seg2P1" placeholder="P1 附加费" value="300">
+            <select id="seg2Currency"><option>USD</option><option>CNY</option></select>
+        </div>
+
+        <!-- 段3 目的地 -->
+        <h3 style="margin-top:24px;">📍 段3 · 目的地服务</h3>
+        <div class="form-group">
+            <label>供应商</label>
+            <input type="text" id="seg3Supplier" value="德国代理 (Hans +49xxx)">
+        </div>
+        <div id="seg3Tasks" class="task-list"></div>
+        <button class="btn" onclick="addTask('seg3')" style="margin-top:5px;">+ 添加任务</button>
+        <div class="fee-row" style="margin-top:12px;">
+            <input type="text" id="seg3P0" placeholder="P0 服务费" value="1200">
+            <input type="text" id="seg3P1" placeholder="P1 附加费" value="200">
+            <select id="seg3Currency"><option>EUR</option><option>USD</option><option>CNY</option></select>
+        </div>
+
+        <p style="font-size:0.75rem; color:#64748b; margin-top:16px;">🔒 内部计划，对外以合同为准</p>
+
+        <div class="action-bar">
+            <button class="btn btn-primary" onclick="updatePreview()">🔄 刷新预览</button>
+            <button class="btn btn-primary" onclick="printPDF()">📄 导出 PDF</button>
+        </div>
+    </div>
+
+    <!-- 右侧预览区 -->
+    <div class="preview-panel" id="previewPanel">
+        <h2>📄 流转单预览</h2>
+        <div id="previewContainer" class="preview-container">
+            <!-- 实时渲染 -->
+        </div>
+    </div>
+</div>
+
+<!-- 历史版本弹窗 -->
+<div id="historyModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000;">
+    <div style="background:white; max-width:500px; margin:80px auto; padding:20px; border-radius:12px;">
+        <h3 style="margin-top:0;">📂 历史版本</h3>
+        <div id="historyList" style="max-height:300px; overflow-y:auto;"></div>
+        <button class="btn" onclick="closeHistory()" style="margin-top:16px;">关闭</button>
+    </div>
+</div>
+
+<script>
+    // 任务数据
+    let tasks = {
+        seg1: [
+            { name:'订舱', responsible:'我方', plannedDate:'', completed:false },
+            { name:'装箱', responsible:'供应商', plannedDate:'', completed:false },
+            { name:'报关', responsible:'我方', plannedDate:'', completed:false }
+        ],
+        seg2: [
+            { name:'发运', responsible:'承运人', plannedDate:'', completed:false },
+            { name:'到港', responsible:'承运人', plannedDate:'', completed:false }
+        ],
+        seg3: [
+            { name:'清关', responsible:'供应商', plannedDate:'', completed:false },
+            { name:'派送', responsible:'供应商', plannedDate:'', completed:false }
+        ]
+    };
+
+    const responsibleOptions = ['我方', '供应商', '客户', '承运人'];
+
+    function renderTasks() {
+        ['seg1','seg2','seg3'].forEach(seg => {
+            const container = document.getElementById(seg+'Tasks');
+            container.innerHTML = '';
+            tasks[seg].forEach((task, idx) => {
+                const div = document.createElement('div');
+                div.className = 'task-item';
+                div.innerHTML = `
+                    <input type="checkbox" ${task.completed ? 'checked' : ''} onchange="toggleTask('${seg}',${idx})">
+                    <input type="text" value="${task.name}" onchange="updateTask('${seg}',${idx},'name',this.value)">
+                    <select onchange="updateTask('${seg}',${idx},'responsible',this.value)">
+                        ${responsibleOptions.map(opt => `<option ${task.responsible===opt?'selected':''}>${opt}</option>`).join('')}
+                    </select>
+                    <input type="date" class="task-date" value="${task.plannedDate}" onchange="updateTask('${seg}',${idx},'plannedDate',this.value)">
+                    <button onclick="deleteTask('${seg}',${idx})" style="background:none; border:none; color:#e53e3e; cursor:pointer; font-size:16px;">🗑️</button>
+                `;
+                container.appendChild(div);
+            });
+        });
+    }
+
+    window.toggleTask = (seg, idx) => {
+        tasks[seg][idx].completed = !tasks[seg][idx].completed;
+        updatePreview();
+    };
+    window.updateTask = (seg, idx, field, value) => {
+        tasks[seg][idx][field] = value;
+        updatePreview();
+    };
+    window.deleteTask = (seg, idx) => {
+        tasks[seg].splice(idx, 1);
+        renderTasks();
+        updatePreview();
+    };
+    window.addTask = (seg) => {
+        const newName = prompt('任务名称：');
+        if (!newName) return;
+        tasks[seg].push({ name: newName, responsible: '我方', plannedDate: '', completed: false });
+        renderTasks();
+        updatePreview();
+    };
+
+    // 更新预览
+    function updatePreview() {
+        const project = document.getElementById('projectName').value || '未命名项目';
+        const version = document.getElementById('versionDisplay').value;
+        const trade = document.getElementById('tradeTerm').value;
+        const container = document.getElementById('containerInfo').value;
+        const geo1 = document.getElementById('geo1').value;
+        const geo2 = document.getElementById('geo2').value;
+        const geo3 = document.getElementById('geo3').value;
+
+        const seg1Sup = document.getElementById('seg1Supplier').value;
+        const seg2Car = document.getElementById('seg2Carrier').value;
+        const seg3Sup = document.getElementById('seg3Supplier').value;
+
+        const today = new Date().toISOString().slice(0,10);
+
+        // 构建预览 HTML
+        let html = `
+            <div class="preview-header">
+                <div class="preview-title">业务流转单 · ${project}</div>
+                <div class="preview-sub">版本 ${version} | 生成时间 ${today}</div>
+                <div class="preview-sub">${trade}  ${container}  |  ${geo1} → ${geo2} → ${geo3}</div>
+            </div>
+        `;
+
+        html += renderSegmentPreview('段1 · 起运地服务', seg1Sup, tasks.seg1, 'seg1');
+        html += renderSegmentPreview('段2 · 干线段', seg2Car, tasks.seg2, 'seg2');
+        html += renderSegmentPreview('段3 · 目的地服务', seg3Sup, tasks.seg3, 'seg3');
+
+        // 费用汇总
+        const seg1Fees = getFeeSummary('seg1');
+        const seg2Fees = getFeeSummary('seg2');
+        const seg3Fees = getFeeSummary('seg3');
+        const totalCNY = seg1Fees.cny + seg2Fees.usd*7.2 + seg3Fees.eur*7.8; // 简化汇率
+
+        html += `
+            <div class="preview-section">
+                <h4>💰 费用快览（预估）</h4>
+                <div class="fee-summary"><span>段1 (${document.getElementById('seg1Currency').value})：</span><span>P0 ${seg1Fees.p0} + P1 ${seg1Fees.p1} + P2 ${seg1Fees.p2}</span></div>
+                <div class="fee-summary"><span>段2 (${document.getElementById('seg2Currency').value})：</span><span>P0 ${seg2Fees.p0} + P1 ${seg2Fees.p1}</span></div>
+                <div class="fee-summary"><span>段3 (${document.getElementById('seg3Currency').value})：</span><span>P0 ${seg3Fees.p0} + P1 ${seg3Fees.p1}</span></div>
+                <div class="total-box">预估总计 ≈ CNY ${totalCNY.toFixed(2)}</div>
+            </div>
+            <div class="footnote">内部计划，对外以合同为准</div>
+        `;
+
+        document.getElementById('previewContainer').innerHTML = html;
+    }
+
+    function renderSegmentPreview(title, supplier, taskList, segId) {
+        let html = `<div class="preview-section"><h4>${title} — ${supplier}</h4>`;
+        html += `<table class="task-table"><tr><th>状态</th><th>任务</th><th>责任方</th><th>计划日期</th></tr>`;
+        taskList.forEach(t => {
+            html += `<tr><td>${t.completed ? '✅' : '⬜'}</td><td>${t.name}</td><td>${t.responsible}</td><td>${t.plannedDate || '-'}</td></tr>`;
+        });
+        html += `</table></div>`;
+        return html;
+    }
+
+    function getFeeSummary(seg) {
+        const p0 = parseFloat(document.getElementById(seg+'P0')?.value) || 0;
+        const p1 = parseFloat(document.getElementById(seg+'P1')?.value) || 0;
+        const p2 = parseFloat(document.getElementById(seg+'P2')?.value) || 0;
+        const cur = document.getElementById(seg+'Currency')?.value;
+        let cny = 0;
+        if (cur === 'CNY') cny = p0+p1+p2;
+        else if (cur === 'USD') cny = (p0+p1+p2)*7.2;
+        else if (cur === 'EUR') cny = (p0+p1+p2)*7.8;
+        return { p0, p1, p2, cny, usd: cur==='USD'?p0+p1+p2:0, eur: cur==='EUR'?p0+p1+p2:0 };
+    }
+
+    function printPDF() {
+        window.print();
+    }
+
+    // 版本管理
+    function getAllVersions() {
+        const project = document.getElementById('projectName').value;
+        const versions = [];
+        for (let i=0; i<localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key.startsWith(`wf_${project}_`)) {
+                versions.push(JSON.parse(localStorage.getItem(key)));
+            }
+        }
+        return versions.sort((a,b)=> (b.savedAt||'').localeCompare(a.savedAt||''));
+    }
+
+    function saveAsNewVersion() {
+        const project = document.getElementById('projectName').value;
+        const currentVersion = document.getElementById('versionDisplay').value;
+        
+        // 提取数字
+        const match = currentVersion.match(/V(\d+)/);
+        let nextNum = match ? parseInt(match[1]) + 1 : 1;
+        
+        const newVersion = `V${nextNum}`;
+        if (!confirm(`将当前内容保存为新版本 ${newVersion}，旧版本将保留。确定吗？`)) return;
+
+        const data = {
+            projectName: project,
+            version: newVersion,
+            tradeTerm: document.getElementById('tradeTerm').value,
+            containerInfo: document.getElementById('containerInfo').value,
+            geo1: document.getElementById('geo1').value,
+            geo2: document.getElementById('geo2').value,
+            geo3: document.getElementById('geo3').value,
+            seg1Supplier: document.getElementById('seg1Supplier').value,
+            seg2Carrier: document.getElementById('seg2Carrier').value,
+            seg3Supplier: document.getElementById('seg3Supplier').value,
+            seg1Fees: { p0: document.getElementById('seg1P0').value, p1: document.getElementById('seg1P1').value, p2: document.getElementById('seg1P2').value, currency: document.getElementById('seg1Currency').value },
+            seg2Fees: { p0: document.getElementById('seg2P0').value, p1: document.getElementById('seg2P1').value, currency: document.getElementById('seg2Currency').value },
+            seg3Fees: { p0: document.getElementById('seg3P0').value, p1: document.getElementById('seg3P1').value, currency: document.getElementById('seg3Currency').value },
+            tasks: JSON.parse(JSON.stringify(tasks)),
+            savedAt: new Date().toISOString()
+        };
+        localStorage.setItem(`wf_${project}_${newVersion}`, JSON.stringify(data));
+        document.getElementById('versionDisplay').value = newVersion;
+        alert(`已保存为 ${newVersion}`);
+    }
+
+    function loadHistory() {
+        const versions = getAllVersions();
+        const listDiv = document.getElementById('historyList');
+        if (versions.length === 0) {
+            listDiv.innerHTML = '<p>暂无历史版本</p>';
+        } else {
+            listDiv.innerHTML = versions.map(v => `
+                <div style="padding:8px; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between;">
+                    <span><strong>${v.version}</strong> - ${v.savedAt?.slice(0,10) || ''}</span>
+                    <button onclick="loadVersion('${v.projectName}','${v.version}')">加载</button>
+                </div>
+            `).join('');
+        }
+        document.getElementById('historyModal').style.display = 'block';
+    }
+
+    window.loadVersion = (project, version) => {
+        const data = JSON.parse(localStorage.getItem(`wf_${project}_${version}`));
+        if (!data) return;
+        document.getElementById('projectName').value = data.projectName;
+        document.getElementById('versionDisplay').value = data.version;
+        document.getElementById('tradeTerm').value = data.tradeTerm;
+        document.getElementById('containerInfo').value = data.containerInfo;
+        document.getElementById('geo1').value = data.geo1;
+        document.getElementById('geo2').value = data.geo2;
+        document.getElementById('geo3').value = data.geo3;
+        document.getElementById('seg1Supplier').value = data.seg1Supplier;
+        document.getElementById('seg2Carrier').value = data.seg2Carrier;
+        document.getElementById('seg3Supplier').value = data.seg3Supplier;
+        if (data.seg1Fees) {
+            document.getElementById('seg1P0').value = data.seg1Fees.p0;
+            document.getElementById('seg1P1').value = data.seg1Fees.p1;
+            document.getElementById('seg1P2').value = data.seg1Fees.p2;
+            document.getElementById('seg1Currency').value = data.seg1Fees.currency;
+        }
+        if (data.seg2Fees) {
+            document.getElementById('seg2P0').value = data.seg2Fees.p0;
+            document.getElementById('seg2P1').value = data.seg2Fees.p1;
+            document.getElementById('seg2Currency').value = data.seg2Fees.currency;
+        }
+        if (data.seg3Fees) {
+            document.getElementById('seg3P0').value = data.seg3Fees.p0;
+            document.getElementById('seg3P1').value = data.seg3Fees.p1;
+            document.getElementById('seg3Currency').value = data.seg3Fees.currency;
+        }
+        tasks = data.tasks;
+        renderTasks();
+        updatePreview();
+        closeHistory();
+    };
+
+    window.closeHistory = () => document.getElementById('historyModal').style.display = 'none';
+
+    // 初始化
+    renderTasks();
+    updatePreview();
+
+    // 绑定输入事件
+    document.querySelectorAll('input, select').forEach(el => el.addEventListener('input', updatePreview));
+    // 特殊处理费用输入
+    ['seg1P0','seg1P1','seg1P2','seg2P0','seg2P1','seg3P0','seg3P1'].forEach(id => {
+        document.getElementById(id)?.addEventListener('input', updatePreview);
+    });
+</script>
+</body>
+</html>
