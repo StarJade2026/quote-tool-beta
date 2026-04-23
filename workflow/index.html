@@ -270,6 +270,15 @@
             font-style: italic;
             margin: 4px 0;
         }
+        .help-box {
+            background: #fef9e7;
+            border-left: 4px solid #e67e22;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            color: #7d6608;
+            margin: 12px 0;
+        }
         @media print {
             .form-panel, .action-bar, .version-bar, h2 { display: none; }
             .preview-panel { box-shadow: none; padding: 0; margin: 0; width: 100%; }
@@ -297,6 +306,13 @@
             <span id="specifiedTagSwitch" style="cursor:pointer; user-select:none;" onclick="toggleSpecifiedTag()">🔘 指定货</span>
             <button class="btn" onclick="saveAsNewVersion()" style="margin-left:auto;">💾 保存为新版本</button>
             <button class="btn" onclick="loadHistory()">📂 历史</button>
+        </div>
+
+        <!-- 使用提示 -->
+        <div class="help-box">
+            💡 <strong>版本管理提示：</strong>此工具没有记忆功能，所有版本保存在当前浏览器中。<br>
+            • 如果你有“主流转单+子流转单”，请先 <strong>导出主流转单（打印PDF）</strong>，再修改名称制作子流转单。<br>
+            • 导出后的PDF可以保存到电脑或网盘，以备回溯。
         </div>
 
         <!-- 时间节点 -->
@@ -431,7 +447,7 @@
 
 <script>
     // 全局状态
-    let isSpecified = false; // 指定货开关
+    let isSpecified = false;
     let upstreamCards = [
         { type: 'domestic', company: '丹东昱豪制衣有限公司', contact: '陆建新', phone: '13913202350' }
     ];
@@ -439,7 +455,6 @@
         { type: '换单代理', company: '德国代理 (Hans)', contact: '+49xxx', phone: '' }
     ];
 
-    // 任务数据
     let tasks = {
         seg1: [
             { name:'订舱', responsible:'XX物流 (张经理 138xxxx)', completed:false },
@@ -458,7 +473,6 @@
 
     const supplierTypes = ['换单代理', '清关行', '卡车公司', '收货人', '其他'];
 
-    // ---- 指定货开关 ----
     window.toggleSpecifiedTag = function() {
         isSpecified = !isSpecified;
         const el = document.getElementById('specifiedTagSwitch');
@@ -467,7 +481,6 @@
         updatePreview();
     };
 
-    // ---- 上游委托方卡片 ----
     function renderUpstreamCards() {
         const container = document.getElementById('upstreamCards');
         container.innerHTML = '';
@@ -517,11 +530,10 @@
     };
     window.updateUpstreamCard = function(idx, field, value) {
         upstreamCards[idx][field] = value;
-        renderUpstreamCards(); // 重新渲染以联动字段变化
+        renderUpstreamCards();
         updatePreview();
     };
 
-    // ---- 段3 多供应商卡片 ----
     function renderSeg3SupplierCards() {
         const container = document.getElementById('seg3SupplierCards');
         container.innerHTML = '';
@@ -560,7 +572,7 @@
     window.addSeg3SupplierCard = function() {
         seg3SupplierCards.push({ type: '换单代理', company: '', contact: '', phone: '' });
         renderSeg3SupplierCards();
-        updateTaskResponsibleOptions(); // 更新段3任务责任方选项
+        updateTaskResponsibleOptions();
         updatePreview();
     };
     window.deleteSeg3SupplierCard = function(idx) {
@@ -576,7 +588,6 @@
         updatePreview();
     };
 
-    // ---- 责任方选项动态获取 ----
     function getResponsibleOptionsForSeg(seg) {
         const options = ['我方', '客户'];
         if (seg === 'seg1') {
@@ -598,7 +609,6 @@
         updatePreview();
     };
 
-    // ---- 任务渲染 ----
     function renderTasks() {
         ['seg1','seg2','seg3'].forEach(seg => {
             const container = document.getElementById(seg+'Tasks');
@@ -632,7 +642,6 @@
         updatePreview();
     };
 
-    // ---- 时间窗口 ----
     function calcWindow() {
         const dDate = document.getElementById('deliveryDate').value;
         const eDate = document.getElementById('etdDate').value;
@@ -652,7 +661,6 @@
         document.getElementById(id)?.addEventListener('input', () => { calcWindow(); updatePreview(); });
     });
 
-    // ---- 预览 ----
     function updatePreview() {
         const project = document.getElementById('projectName').value || '未命名项目';
         const customer = document.getElementById('customerName').value || '';
@@ -683,7 +691,6 @@
             </div>
         `;
 
-        // 上游委托方列表
         if (upstreamCards.length > 0) {
             html += `<div class="preview-section"><h4>🧑‍🤝‍🧑 上游委托方</h4>
                 <table class="task-table"><tr><th>类型</th><th>公司名称</th><th>联系人</th><th>电话</th><th>国家</th></tr>`;
@@ -697,7 +704,6 @@
         html += renderSegmentPreview('段1 · 起运地服务', seg1Sup, tasks.seg1, seg1Note);
         html += renderSegmentPreview('段2 · 干线段', seg2Car, tasks.seg2, seg2Note);
 
-        // 段3 多供应商
         if (seg3SupplierCards.length > 0) {
             html += `<div class="preview-section"><h4>📍 段3 · 目的地服务方</h4>
                 <table class="task-table"><tr><th>服务类型</th><th>公司名称</th><th>联系人</th><th>电话</th></tr>`;
@@ -712,7 +718,6 @@
             html += renderSegmentPreview('段3 · 目的地服务', seg3SupplierCards[0]?.company || '', tasks.seg3, seg3Note);
         }
 
-        // 费用表格
         const seg1Fees = { p0: parseFloat(document.getElementById('seg1P0').value)||0, p1: parseFloat(document.getElementById('seg1P1').value)||0, p2: parseFloat(document.getElementById('seg1P2').value)||0 };
         const seg2Fees = { p0: parseFloat(document.getElementById('seg2P0').value)||0, p1: parseFloat(document.getElementById('seg2P1').value)||0 };
         const seg3Fees = { p0: parseFloat(document.getElementById('seg3P0').value)||0, p1: parseFloat(document.getElementById('seg3P1').value)||0 };
@@ -756,7 +761,6 @@
 
     function printPDF() { window.print(); }
 
-    // ---- 版本管理 ----
     function getAllVersions() {
         const project = document.getElementById('projectName').value;
         const versions = [];
