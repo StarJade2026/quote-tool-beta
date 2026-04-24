@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>业务流转单 · 极简原型 v0.3</title>
+    <title>业务流转单 · 极简原型 v0.4</title>
     <style>
         * { box-sizing: border-box; }
         body {
@@ -35,70 +35,16 @@
             padding: 24px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
-        h2 {
-            margin: 0 0 16px 0;
-            font-size: 1.5rem;
-            color: #0f172a;
-            border-left: 4px solid #2563eb;
-            padding-left: 12px;
-        }
-        h3 {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #334155;
-            margin: 20px 0 10px 0;
-            border-bottom: 1px solid #e2e8f0;
-            padding-bottom: 6px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .form-group {
-            margin-bottom: 14px;
-        }
-        label {
-            display: block;
-            font-weight: 500;
-            font-size: 0.85rem;
-            margin-bottom: 4px;
-            color: #475569;
-        }
-        input, select, textarea {
-            width: 100%;
-            padding: 8px 12px;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            background: white;
-            font-family: inherit;
-        }
-        textarea {
-            resize: vertical;
-            min-height: 50px;
-        }
-        .row-2 {
-            display: flex;
-            gap: 10px;
-        }
+        h2 { margin: 0 0 16px 0; font-size: 1.5rem; color: #0f172a; border-left: 4px solid #2563eb; padding-left: 12px; }
+        h3 { font-size: 1rem; font-weight: 600; color: #334155; margin: 20px 0 10px 0; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+        .form-group { margin-bottom: 14px; }
+        label { display: block; font-weight: 500; font-size: 0.85rem; margin-bottom: 4px; color: #475569; }
+        input, select, textarea { width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; background: white; font-family: inherit; }
+        textarea { resize: vertical; min-height: 50px; }
+        .row-2 { display: flex; gap: 10px; }
         .row-2 > * { flex: 1; }
-        .card {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            padding: 12px;
-            margin-bottom: 10px;
-            position: relative;
-        }
-        .card .delete-card-btn {
-            position: absolute;
-            top: 8px;
-            right: 10px;
-            background: none;
-            border: none;
-            color: #e53e3e;
-            font-size: 18px;
-            cursor: pointer;
-        }
+        .card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; margin-bottom: 10px; position: relative; }
+        .card .delete-card-btn { position: absolute; top: 8px; right: 10px; background: none; border: none; color: #e53e3e; font-size: 18px; cursor: pointer; }
         .task-item {
             display: flex;
             align-items: center;
@@ -111,7 +57,7 @@
         }
         .task-item input[type="checkbox"] { width: 20px; height: 20px; margin: 0; flex-shrink: 0; }
         .task-item input[type="text"] { flex: 1; min-width: 100px; }
-        .task-item select { width: auto; min-width: 120px; }
+        .task-item select { width: auto; min-width: 130px; }
         .fee-row {
             display: flex;
             gap: 8px;
@@ -132,22 +78,10 @@
             font-size: 0.85rem;
             margin-right: 8px;
         }
-        .btn-sm {
-            padding: 4px 10px;
-            font-size: 0.8rem;
-        }
-        .btn-primary {
-            background: #2563eb;
-            border-color: #2563eb;
-            color: white;
-        }
+        .btn-sm { padding: 4px 10px; font-size: 0.8rem; }
+        .btn-primary { background: #2563eb; border-color: #2563eb; color: white; }
         .btn-primary:hover { background: #1d4ed8; }
-        .action-bar {
-            margin-top: 24px;
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
+        .action-bar { margin-top: 24px; display: flex; gap: 12px; flex-wrap: wrap; }
         .version-bar {
             display: flex;
             align-items: center;
@@ -161,13 +95,7 @@
         .version-bar label { margin: 0; font-weight: 600; white-space: nowrap; }
         .version-bar input { width: 120px; flex-shrink: 0; }
         .version-bar span { color: #64748b; }
-        .tag {
-            font-size: 0.75rem;
-            font-weight: 600;
-            padding: 2px 8px;
-            border-radius: 12px;
-            margin-left: 4px;
-        }
+        .tag { font-size: 0.75rem; font-weight: 600; padding: 2px 8px; border-radius: 12px; margin-left: 4px; }
         .tag-red { background: #fee2e2; color: #991b1b; }
         .tag-blue { background: #dbeafe; color: #1e40af; }
         .tag-green { background: #dcfce7; color: #166534; }
@@ -191,94 +119,23 @@
             background: #e6f7e6;
             color: #16a34a;
         }
-        .window-badge.warning {
-            background: #fef2f2;
-            color: #dc2626;
-        }
-        .preview-container {
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 20px;
-            font-size: 0.85rem;
-        }
-        .preview-header {
-            text-align: center;
-            border-bottom: 2px solid #1e293b;
-            padding-bottom: 12px;
-            margin-bottom: 16px;
-        }
-        .preview-title {
-            font-size: 1.3rem;
-            font-weight: 700;
-        }
-        .preview-sub {
-            color: #64748b;
-            margin-top: 2px;
-        }
-        .preview-section {
-            margin-bottom: 18px;
-        }
-        .preview-section h4 {
-            background: #f1f5f9;
-            padding: 6px 10px;
-            margin: 0 0 8px 0;
-            font-size: 0.88rem;
-            font-weight: 600;
-        }
-        .task-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 8px;
-        }
-        .task-table th, .task-table td {
-            border: 1px solid #e2e8f0;
-            padding: 6px 8px;
-            text-align: left;
-            font-size: 0.83rem;
-        }
+        .window-badge.warning { background: #fef2f2; color: #dc2626; }
+        .preview-container { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; font-size: 0.85rem; }
+        .preview-header { text-align: center; border-bottom: 2px solid #1e293b; padding-bottom: 12px; margin-bottom: 16px; }
+        .preview-title { font-size: 1.3rem; font-weight: 700; }
+        .preview-sub { color: #64748b; margin-top: 2px; }
+        .preview-section { margin-bottom: 18px; }
+        .preview-section h4 { background: #f1f5f9; padding: 6px 10px; margin: 0 0 8px 0; font-size: 0.88rem; font-weight: 600; }
+        .task-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+        .task-table th, .task-table td { border: 1px solid #e2e8f0; padding: 6px 8px; text-align: left; font-size: 0.83rem; }
         .task-table th { background: #f8fafc; font-weight: 600; }
-        .fee-summary-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 12px 0;
-            font-size: 0.83rem;
-        }
-        .fee-summary-table th, .fee-summary-table td {
-            border: 1px solid #e2e8f0;
-            padding: 7px 8px;
-            text-align: left;
-        }
+        .fee-summary-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.83rem; }
+        .fee-summary-table th, .fee-summary-table td { border: 1px solid #e2e8f0; padding: 7px 8px; text-align: left; }
         .fee-summary-table th { background: #f8fafc; font-weight: 600; }
-        .total-box {
-            font-size: 1.2rem;
-            font-weight: 700;
-            text-align: right;
-            margin-top: 12px;
-            padding-top: 10px;
-            border-top: 2px solid #e2e8f0;
-        }
-        .footnote {
-            color: #94a3b8;
-            font-size: 0.75rem;
-            margin-top: 12px;
-            text-align: center;
-        }
-        .preview-note {
-            color: #64748b;
-            font-size: 0.8rem;
-            font-style: italic;
-            margin: 4px 0;
-        }
-        .help-box {
-            background: #fef9e7;
-            border-left: 4px solid #e67e22;
-            padding: 10px 14px;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            color: #7d6608;
-            margin: 12px 0;
-        }
+        .total-box { font-size: 1.2rem; font-weight: 700; text-align: right; margin-top: 12px; padding-top: 10px; border-top: 2px solid #e2e8f0; }
+        .footnote { color: #94a3b8; font-size: 0.75rem; margin-top: 12px; text-align: center; }
+        .preview-note { color: #64748b; font-size: 0.8rem; font-style: italic; margin: 4px 0; }
+        .help-box { background: #fef9e7; border-left: 4px solid #e67e22; padding: 10px 14px; border-radius: 8px; font-size: 0.8rem; color: #7d6608; margin: 12px 0; }
         @media print {
             .form-panel, .action-bar, .version-bar, h2 { display: none; }
             .preview-panel { box-shadow: none; padding: 0; margin: 0; width: 100%; }
@@ -295,14 +152,11 @@
         
         <!-- 版本管理栏 -->
         <div class="version-bar">
-            <label>项目:</label>
-            <input type="text" id="projectName" value="XX项目">
+            <label>项目:</label><input type="text" id="projectName" value="XX项目">
             <span>|</span>
-            <label>客户:</label>
-            <input type="text" id="customerName" value="XX供应链有限公司">
+            <label>客户:</label><input type="text" id="customerName" value="XX供应链有限公司">
             <span>|</span>
-            <label>版本:</label>
-            <input type="text" id="versionDisplay" value="V1" readonly style="width:50px; background:#f1f5f9;">
+            <label>版本:</label><input type="text" id="versionDisplay" value="V1" readonly style="width:50px; background:#f1f5f9;">
             <span id="specifiedTagSwitch" style="cursor:pointer; user-select:none;" onclick="toggleSpecifiedTag()">🔘 指定货</span>
             <button class="btn" onclick="saveAsNewVersion()" style="margin-left:auto;">💾 保存为新版本</button>
             <button class="btn" onclick="loadHistory()">📂 历史</button>
@@ -311,51 +165,26 @@
         <!-- 使用提示 -->
         <div class="help-box">
             💡 <strong>版本管理提示：</strong>此工具没有记忆功能，所有版本保存在当前浏览器中。<br>
-            • 如果你有“主流转单+子流转单”，请先 <strong>导出主流转单（打印PDF）</strong>，再修改名称制作子流转单。<br>
+            • 如果你有"主流转单+子流转单"，请先 <strong>导出主流转单（打印PDF）</strong>，再修改名称制作子流转单。<br>
             • 导出后的PDF可以保存到电脑或网盘，以备回溯。
         </div>
 
-        <!-- 时间节点 -->
+        <!-- 时间节点（精简为两个全局日期） -->
         <div class="date-highlight">
-            <label>📅 客户交货日期:</label>
-            <input type="date" id="deliveryDate">
-            <label>🚢 ETD 目标离港日:</label>
-            <input type="date" id="etdDate">
+            <label>📅 客户交货日期:</label><input type="date" id="deliveryDate">
+            <label>🚢 ETD 目标离港日:</label><input type="date" id="etdDate">
             <span class="window-badge" id="windowBadge">--</span>
         </div>
 
         <div class="row-2">
-            <div class="form-group">
-                <label>贸易条款</label>
-                <select id="tradeTerm">
-                    <option value="EXW">EXW</option>
-                    <option value="FCA">FCA</option>
-                    <option value="FOB">FOB</option>
-                    <option value="CFR">CFR</option>
-                    <option value="CIF">CIF</option>
-                    <option value="DAP">DAP</option>
-                    <option value="DDP" selected>DDP</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>箱型箱量</label>
-                <input type="text" id="containerInfo" value="1x40HQ">
-            </div>
+            <div class="form-group"><label>贸易条款</label><select id="tradeTerm"><option value="EXW">EXW</option><option value="FCA">FCA</option><option value="FOB">FOB</option><option value="CFR">CFR</option><option value="CIF">CIF</option><option value="DAP">DAP</option><option value="DDP" selected>DDP</option></select></div>
+            <div class="form-group"><label>箱型箱量</label><input type="text" id="containerInfo" value="1x40HQ"></div>
         </div>
 
         <div class="row-2">
-            <div class="form-group">
-                <label>段1 起运地</label>
-                <input type="text" id="geo1" value="上海洋山港">
-            </div>
-            <div class="form-group">
-                <label>段2 干线</label>
-                <input type="text" id="geo2" value="上海港 → 汉堡港">
-            </div>
-            <div class="form-group">
-                <label>段3 目的地</label>
-                <input type="text" id="geo3" value="柏林仓库">
-            </div>
+            <div class="form-group"><label>段1 起运地</label><input type="text" id="geo1" value="上海洋山港"></div>
+            <div class="form-group"><label>段2 干线</label><input type="text" id="geo2" value="上海港 → 汉堡港"></div>
+            <div class="form-group"><label>段3 目的地</label><input type="text" id="geo3" value="柏林仓库"></div>
         </div>
 
         <!-- 段1：上游委托方卡片组 -->
@@ -364,7 +193,7 @@
         <button class="btn btn-sm" onclick="addUpstreamCard()">+ 添加上游委托方</button>
 
         <!-- 段1 服务供应商 -->
-        <h3 style="margin-top: 20px;">🚚 段1 · 起运地服务</h3>
+        <h3 style="margin-top:20px;">🚚 段1 · 起运地服务</h3>
         <div class="form-group">
             <label>服务供应商</label>
             <input type="text" id="seg1Supplier" value="XX物流 (张经理 138xxxx)" oninput="updateTaskResponsibleOptions()">
@@ -481,6 +310,7 @@
         updatePreview();
     };
 
+    // ---- 上游委托方卡片 ----
     function renderUpstreamCards() {
         const container = document.getElementById('upstreamCards');
         container.innerHTML = '';
@@ -534,6 +364,7 @@
         updatePreview();
     };
 
+    // ---- 段3 多供应商卡片 ----
     function renderSeg3SupplierCards() {
         const container = document.getElementById('seg3SupplierCards');
         container.innerHTML = '';
@@ -555,14 +386,8 @@
                     </div>
                 </div>
                 <div class="row-2">
-                    <div class="form-group">
-                        <label>联系人</label>
-                        <input type="text" value="${card.contact || ''}" onchange="updateSeg3SupplierCard(${idx},'contact',this.value)">
-                    </div>
-                    <div class="form-group">
-                        <label>电话</label>
-                        <input type="text" value="${card.phone || ''}" onchange="updateSeg3SupplierCard(${idx},'phone',this.value)">
-                    </div>
+                    <div class="form-group"><label>联系人</label><input type="text" value="${card.contact || ''}" onchange="updateSeg3SupplierCard(${idx},'contact',this.value)"></div>
+                    <div class="form-group"><label>电话</label><input type="text" value="${card.phone || ''}" onchange="updateSeg3SupplierCard(${idx},'phone',this.value)"></div>
                 </div>
             `;
             container.appendChild(div);
@@ -588,6 +413,7 @@
         updatePreview();
     };
 
+    // ---- 责任方选项：动态读取供应商名称 ----
     function getResponsibleOptionsForSeg(seg) {
         const options = ['我方', '客户'];
         if (seg === 'seg1') {
@@ -609,6 +435,7 @@
         updatePreview();
     };
 
+    // ---- 任务渲染（v0.4：删除日期选择器） ----
     function renderTasks() {
         ['seg1','seg2','seg3'].forEach(seg => {
             const container = document.getElementById(seg+'Tasks');
@@ -642,6 +469,7 @@
         updatePreview();
     };
 
+    // ---- 时间窗口计算 ----
     function calcWindow() {
         const dDate = document.getElementById('deliveryDate').value;
         const eDate = document.getElementById('etdDate').value;
@@ -661,6 +489,7 @@
         document.getElementById(id)?.addEventListener('input', () => { calcWindow(); updatePreview(); });
     });
 
+    // ---- 预览渲染（v0.4：费用表格升级） ----
     function updatePreview() {
         const project = document.getElementById('projectName').value || '未命名项目';
         const customer = document.getElementById('customerName').value || '';
@@ -718,22 +547,32 @@
             html += renderSegmentPreview('段3 · 目的地服务', seg3SupplierCards[0]?.company || '', tasks.seg3, seg3Note);
         }
 
-        const seg1Fees = { p0: parseFloat(document.getElementById('seg1P0').value)||0, p1: parseFloat(document.getElementById('seg1P1').value)||0, p2: parseFloat(document.getElementById('seg1P2').value)||0 };
-        const seg2Fees = { p0: parseFloat(document.getElementById('seg2P0').value)||0, p1: parseFloat(document.getElementById('seg2P1').value)||0 };
-        const seg3Fees = { p0: parseFloat(document.getElementById('seg3P0').value)||0, p1: parseFloat(document.getElementById('seg3P1').value)||0 };
+        // ---- 费用表格（v0.4 升级） ----
+        const seg1P0 = parseFloat(document.getElementById('seg1P0').value)||0;
+        const seg1P1 = parseFloat(document.getElementById('seg1P1').value)||0;
+        const seg1P2 = parseFloat(document.getElementById('seg1P2').value)||0;
+        const seg2P0 = parseFloat(document.getElementById('seg2P0').value)||0;
+        const seg2P1 = parseFloat(document.getElementById('seg2P1').value)||0;
+        const seg3P0 = parseFloat(document.getElementById('seg3P0').value)||0;
+        const seg3P1 = parseFloat(document.getElementById('seg3P1').value)||0;
         const seg1Cur = document.getElementById('seg1Currency').value;
         const seg2Cur = document.getElementById('seg2Currency').value;
         const seg3Cur = document.getElementById('seg3Currency').value;
 
+        const seg1Total = seg1P0 + seg1P1 + seg1P2;
+        const seg2Total = seg2P0 + seg2P1;
+        const seg3Total = seg3P0 + seg3P1;
+
         html += `
-            <div class="preview-section"><h4>💰 费用核心摘要（应付）</h4>
+            <div class="preview-section"><h4>💰 费用核心摘要</h4>
             <table class="fee-summary-table">
                 <tr><th>责任段</th><th>应付对象</th><th>核心费用项</th><th>金额</th></tr>
-                <tr><td>段1</td><td>${seg1Sup}</td><td>P0 ${seg1Fees.p0} + P1 ${seg1Fees.p1} + P2 ${seg1Fees.p2}</td><td>${seg1Fees.p0+seg1Fees.p1+seg1Fees.p2} ${seg1Cur}</td></tr>
-                <tr><td>段2</td><td>${seg2Car}</td><td>P0 ${seg2Fees.p0} + P1 ${seg2Fees.p1}</td><td>${seg2Fees.p0+seg2Fees.p1} ${seg2Cur}</td></tr>
-                <tr><td>段3</td><td>${seg3SupplierCards.map(c=>c.company).join(', ') || '--'}</td><td>P0 ${seg3Fees.p0} + P1 ${seg3Fees.p1}</td><td>${seg3Fees.p0+seg3Fees.p1} ${seg3Cur}</td></tr>
+                <tr><td>段1</td><td>${seg1Sup}</td><td>P0主体(${seg1P0}) + P1附加(${seg1P1}) + P2增值(${seg1P2})</td><td>${seg1Total} ${seg1Cur}</td></tr>
+                <tr><td>段2</td><td>${seg2Car}</td><td>P0海运费(${seg2P0}) + P1附加(${seg2P1})</td><td>${seg2Total} ${seg2Cur}</td></tr>
+                <tr><td>段3</td><td>${seg3SupplierCards.map(c=>c.company).join(', ') || '--'}</td><td>P0服务费(${seg3P0}) + P1附加(${seg3P1})</td><td>${seg3Total} ${seg3Cur}</td></tr>
+                <tr style="background:#fef9e7; font-weight:700;"><td colspan="3" style="text-align:right;">应收客户${customer ? ' (' + customer + ')' : ''}</td><td style="color:#94a3b8;">________</td></tr>
             </table>
-            <div class="total-box">应收客户${customer ? ' (' + customer + ')' : ''}: 待确认</div></div>
+            </div>
             <div class="footnote">内部计划，对外以合同为准 | 操作过程中可补充联络人信息，流转单作为公司数据库归档</div>
         `;
 
@@ -761,6 +600,7 @@
 
     function printPDF() { window.print(); }
 
+    // ---- 版本管理 ----
     function getAllVersions() {
         const project = document.getElementById('projectName').value;
         const versions = [];
@@ -873,7 +713,7 @@
 
     window.closeHistory = () => document.getElementById('historyModal').style.display = 'none';
 
-    // 初始化
+    // ---- 初始化 ----
     renderUpstreamCards();
     renderSeg3SupplierCards();
     renderTasks();
