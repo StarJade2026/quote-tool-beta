@@ -235,6 +235,15 @@
             text-decoration: underline;
             cursor: pointer;
         }
+        .guide-text {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-top: 2px;
+        }
+        .guide-text a {
+            color: #64748b;
+            text-decoration: underline;
+        }
         @media print {
             .form-panel, .print-btn, .quote-preview h2, .help-panel, .feedback-btn, .feedback-modal, .terms-modal, .import-modal, .footer-version { display: none; }
             .quote-preview { box-shadow: none; padding: 0; margin: 0; width: 100%; }
@@ -252,7 +261,7 @@
     <span class="close-modal" id="closeFeedbackModal">&times;</span>
     <h4>📢 联系我们</h4>
     <p>📧 邮箱：<a href="mailto:julia.wu@rainbowwaylog.com">julia.wu@rainbowwaylog.com</a></p>
-    <p>📱 微信：<strong>JuliaWu_2026</strong> (请备注“报价工具”)</p>
+    <p>📱 微信：<strong>JuliaWu_2026</strong> (请备注"报价工具")</p>
     <p style="font-size:12px; color:#666;">您也可以直接在微信中截图发给联系人。</p>
 </div>
 
@@ -353,6 +362,7 @@
                 段1：起运地服务
                 <button class="import-btn" onclick="openImportModal()">📦 导入仓库报价</button>
             </div>
+            <p class="guide-text">💡 由仓库方提供，或使用 <a href="warehouse-tool/" target="_blank">仓库报价器</a> 生成</p>
             <div id="segment1-fees"></div>
             <button class="add-btn" onclick="addFee('segment1', 'P0')">+ 添加主体价格</button>
             <button class="add-btn" onclick="addFee('segment1', 'P1')">+ 添加固定附加费</button>
@@ -377,7 +387,9 @@
     </div>
 </div>
 <div class="footer-version">
-    报价单生成器 v2.0-beta4 | 数据保存在本机，刷新不丢失 | 采集-报价闭环
+    报价单生成器 v2.0-beta | 数据保存在本机，刷新不丢失 | 采集-报价闭环
+    <br>
+    🧰 工具箱：<a href="../quote-tool/" style="color:#64748b;">📄 报价</a> | <a href="../quote-tool/warehouse-tool/" style="color:#64748b;">🏭 仓库报价</a> | <a href="workflow/" style="color:#64748b;">📋 流转单</a>
     <br>
     <a id="termsLink" style="cursor: pointer;">📜 使用条款</a>
 </div>
@@ -650,17 +662,14 @@
                 return;
             }
             
-            // 解码 Base64
             var binary = atob(dataParam);
             var bytes = new Uint8Array(binary.length);
             for (var i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
             
             var jsonStr;
             try {
-                // 尝试 gunzip 解压（新版压缩格式）
                 jsonStr = pako.ungzip(bytes, { to: 'string' });
             } catch (e) {
-                // 如果解压失败，可能是旧版未压缩格式
                 jsonStr = decodeURIComponent(binary);
             }
             
